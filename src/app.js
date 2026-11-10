@@ -8,7 +8,7 @@ import serve from 'koa-static';
 import path from 'node:path';
 
 import { router } from './api/v1.0/index.js';
-import swaggerDoc from './swagger/index.swagger.js';
+import swaggerDoc from './docs/swagger/v1.0/index.swagger.js';
 import { errorHandler } from './services/errorHandler.js';
 import { PROJECT_ROOT } from './config/storage.js';
 

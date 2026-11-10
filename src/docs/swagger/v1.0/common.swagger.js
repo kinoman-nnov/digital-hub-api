@@ -4,13 +4,7 @@ export const makeRequestBody = (schemaName, description = 'Успешный за
   content: {
     'application/json': {
       schema: {
-        type: 'object',
-        required: ['data'],
-        properties: {
-          data: {
-            $ref: `#/components/schemas/${schemaName}`
-          },
-        }
+        $ref: `#/components/schemas/${schemaName}`
       }
     }
   }
@@ -21,7 +15,7 @@ export const makeMultipartRequestBody = (schemaName, description = 'Запрос
   content: {
     'multipart/form-data': {
       schema: {
-        $ref: `#/components/schemas/${schemaName}` 
+        $ref: `#/components/schemas/${schemaName}`
       }
     }
   }
@@ -33,16 +27,15 @@ export const makePaginatedResponse = (schemaName, description = 'Успешны�
     'application/json': {
       schema: {
         type: 'object',
-        required: ['data'],
+        required: ['items', 'meta'],
         properties: {
           data: {
             type: 'array',
-            items: {
-              $ref: `#/components/schemas/${schemaName}`
-            }
+            items: { $ref: `#/components/schemas/${schemaName}` }
           },
           meta: {
             type: 'object',
+            required: ['total', 'limit', 'page'],
             properties: {
               total: { type: 'integer', example: 100 },
               limit: { type: 'integer', example: 10 },
@@ -60,23 +53,25 @@ export const makeSingleResponse = (schemaName, description = 'Успешный �
   content: {
     'application/json': {
       schema: {
-        type: 'object',
-        required: ['data'],
-        properties: {
-          data: {
-            $ref: `#/components/schemas/${schemaName}`
-          },
-          meta: { // метаданные для одиночного запроса
+        allOf: [
+          { $ref: `#/components/schemas/${schemaName}` },
+          {
             type: 'object',
+            required: ['meta'],
             properties: {
-              timestamp: {
-                type: 'string',
-                format: 'date-time',
-                example: '2026-10-29T13:57:00Z'
+              meta: {
+                type: 'object',
+                properties: {
+                  timestamp: {
+                    type: 'string',
+                    format: 'date-time',
+                    example: '2026-10-29T13:57:00Z'
+                  }
+                }
               }
             }
           }
-        }
+        ]
       }
     }
   }
@@ -88,15 +83,15 @@ export const makeStatusResponse = (messageExample = 'Операция успеш
     'application/json': {
       schema: {
         type: 'object',
-        required: ['message', 'version'],
+        required: ['message'],
         properties: {
           message: {
             type: 'string',
             example: messageExample
           },
-          version: {
+          meta: {
             type: 'string',
-            example: '1.0.0'
+            example: 'Системное сообщение'
           }
         }
       }

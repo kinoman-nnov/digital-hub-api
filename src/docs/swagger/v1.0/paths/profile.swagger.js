@@ -8,7 +8,7 @@ export const profileSwagger = {
       get: {
         summary: 'Авторизация при наличии токена.',
         description: "Возвращает объект пользователя.",
-        tags: ['Auth'],
+        tags: ['Users'],
         responses: {
           200: makeSingleResponse('UserResponse'),
           400: error_400,
@@ -18,7 +18,7 @@ export const profileSwagger = {
       patch: {
         summary: 'Обновление информации о пользователе.',
         description: "Возвращает объект пользователя.",
-        tags: ['Auth'],
+        tags: ['Users'],
         security: [{ BearerAuth: [] }],
         requestBody: makeMultipartRequestBody('UpdateProfileRequestBody'),
         responses: {

@@ -76,7 +76,7 @@ const baseSwagger = {
       },
 
       // Сигнатура запроса создание нового пользователя (регистрация)
-      RegRequestBody: {
+      RegisterRequestBody: {
         allOf: [
           { $ref: '#/components/schemas/LoginRequestBody' },
           {
@@ -108,29 +108,54 @@ const baseSwagger = {
         }
       },
 
+      // Сигнатура запроса создание новости
+      NewsRequestBody: {
+        type: 'object',
+        required: ['text', 'title'],
+        properties: {
+          title: { type: 'string', example: 'Заголовок новости' },
+          text: { type: 'string', example: 'Текст новой новости' }
+        }
+      },
+
       // === Модели объектов (Ответы) ===
 
-      // Объект пользователя
-      UserResponse: {
+      // Базовый объект пользователя
+      User: {
         type: 'object',
-        required: ['id', 'username', 'firstName', 'surName', 'permission'],
+        required: ['id', 'username', 'firstName', 'surName'],
         properties: {
           id: { type: "string", example: "60c72b2f9b1d8b001558f65a" },
           username: { type: 'string', example: 'john_doe' },
           firstName: { type: 'string', example: 'Иван' },
           surName: { type: 'string', example: 'Иванов' },
           image: { type: 'string', example: '/storage/img/avatar.jpg' },
-          middleName: { type: 'string', example: 'Иванович' },
-          permission: {
+          middleName: { type: 'string', example: 'Иванович' }
+        }
+      },
+
+      // Объект permission
+      Permission: {
+        type: 'object',
+        required: ['chat', 'news', 'settings'],
+        properties: {
+          chat: { type: 'object', properties: { C: { type: 'boolean' }, R: { type: 'boolean' }, U: { type: 'boolean' }, D: { type: 'boolean' } } },
+          news: { type: 'object', properties: { C: { type: 'boolean' }, R: { type: 'boolean' }, U: { type: 'boolean' }, D: { type: 'boolean' } } },
+          settings: { type: 'object', properties: { C: { type: 'boolean' }, R: { type: 'boolean' }, U: { type: 'boolean' }, D: { type: 'boolean' } } }
+        }
+      },
+
+      UserResponse: {
+        allOf: [
+          { $ref: '#/components/schemas/User' },
+          {
             type: 'object',
-            required: ['chat', 'news', 'settings'],
+            required: ['permission'],
             properties: {
-              chat: { type: 'object', properties: { C: { type: 'boolean' }, R: { type: 'boolean' }, U: { type: 'boolean' }, D: { type: 'boolean' } } },
-              news: { type: 'object', properties: { C: { type: 'boolean' }, R: { type: 'boolean' }, U: { type: 'boolean' }, D: { type: 'boolean' } } },
-              settings: { type: 'object', properties: { C: { type: 'boolean' }, R: { type: 'boolean' }, U: { type: 'boolean' }, D: { type: 'boolean' } } }
+              permission: { $ref: '#/components/schemas/Permission' }
             }
           }
-        }
+        ]
       },
 
       // === BFF PATTERN ===
@@ -182,36 +207,53 @@ const baseSwagger = {
           { $ref: '#/components/schemas/UserResponse' },
           { $ref: '#/components/schemas/TokenResponse' }
         ]
-      }
-    },
+      },
 
-    // Шаблоны готовых HTTP-ответов сервера
-    responses: {
-      // Шаблон для 500 ошибки
-      InternalServerError: {
-        description: 'Внутренняя ошибка сервера (проблема на бэкенде)',
-        content: {
-          'application/json': {
-            schema: {
-              type: 'object',
-              properties: {
-                error: { type: 'string', example: 'Internal Server Error' },
-                message: { type: 'string', example: 'An unexpected error occurred on the server' }
+      // Объект новости
+      NewsResponse: {
+        type: 'object',
+        required: ['id', 'created_at', 'text', 'title', 'user'],
+        properties: {
+          id: { type: "string", example: "6dsgu578k3m3j56k6jgh6gh78" },
+          created_at: {
+            type: 'string',
+            format: 'date-time',
+            example: '2026-11-09T12:00:00.000Z'
+          },
+          title: { type: 'string', example: 'Заголовок новости' },
+          text: { type: 'string', example: 'Текст новости от пользователя' },
+          user: { $ref: '#/components/schemas/User' }
+        }
+      },
+
+      // Шаблоны готовых HTTP-ответов сервера
+      responses: {
+        // Шаблон для 500 ошибки
+        InternalServerError: {
+          description: 'Внутренняя ошибка сервера (проблема на бэкенде)',
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                properties: {
+                  error: { type: 'string', example: 'Internal Server Error' },
+                  message: { type: 'string', example: 'An unexpected error occurred on the server' }
+                }
               }
             }
           }
         }
-      }
-    },
+      },
 
-    // Настройки безопасности (Авторизация)
-    securitySchemes: {
-      // Описание JWT Bearer авторизации (активирует кнопку Authorize сверху страницы)
-      BearerAuth: {
-        type: 'http',
-        scheme: 'bearer',
-        bearerFormat: 'JWT',
-        description: 'Введите ваш JWT-токен (Bearer подставится автоматически)'
+      // Настройки безопасности (Авторизация)
+      securitySchemes: {
+        // Описание JWT Bearer авторизации (активирует кнопку Authorize сверху страницы)
+        BearerAuth: {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT',
+          description: 'Введите ваш JWT-токен (Bearer подставится автоматически)'
+        }
       }
     }
   }

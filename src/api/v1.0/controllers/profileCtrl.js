@@ -23,7 +23,7 @@ export async function patchProfile(ctx, next) {
 
   let fileName;
   if (ctx.file) fileName = ctx.file.originalname;
-  if (!fileName) fileName = 'default.png'
+  if (!fileName) fileName = 'default.png';
   
   ctx.status = 200;
   ctx.body = {

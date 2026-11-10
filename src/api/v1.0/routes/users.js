@@ -1,8 +1,9 @@
 import Router from "@koa/router";
-import { users } from "../controllers/usersCtrl.js";
+import { getUsers, deleteUser } from "../controllers/usersCtrl.js";
 
 const router = new Router();
 
-router.get('/', users);
+router.get('/', getUsers);
+router.delete('/:id', deleteUser);
 
 export default router;

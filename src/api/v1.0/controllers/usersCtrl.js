@@ -1,38 +1,39 @@
-export async function users(ctx, next){
-  const usersFromDb = [
-    {
-      id: 'user_67890abc',
-      username: 'johndoe',
-      firstName: 'Иван',
-      surName: 'Иванов',
-      middleName: 'Иванович',
-      image: '/storage/img/user_1.png',
-      properties: {
-        chat: { C: true, R: true, U: true, D: true },
-        news: { C: true, R: true, U: true, D: true },
-        settings: { C: true, R: true, U: true, D: true }
-      }
-    },
-    {
-      id: 'user_37390dfe',
-      username: 'janedoe',
-      firstName: 'Мария',
-      surName: 'Иванова',
-      middleName: 'Ивановна',
-      image: '/storage/img/user_2.png',
-      properties: {
-        chat: { C: true, R: true, U: true, D: true },
-        news: { C: true, R: true, U: true, D: true },
-        settings: { C: true, R: true, U: true, D: true }
-      }
+const usersDb = [
+  {
+    id: 'user_60c72b2f9b1d8b001558f65a',
+    username: 'johndoe',
+    firstName: 'Иван',
+    surName: 'Иванов',
+    middleName: 'Иванович',
+    image: '/storage/img/user_1.png',
+    properties: {
+      chat: { C: true, R: true, U: true, D: true },
+      news: { C: true, R: true, U: true, D: true },
+      settings: { C: true, R: true, U: true, D: true }
     }
-  ];
-  
+  },
+  {
+    id: 'user_37390dfe3f4g5gdfs5454df3',
+    username: 'janedoe',
+    firstName: 'Мария',
+    surName: 'Иванова',
+    middleName: 'Ивановна',
+    image: '/storage/img/user_2.png',
+    properties: {
+      chat: { C: true, R: true, U: true, D: true },
+      news: { C: true, R: true, U: true, D: true },
+      settings: { C: true, R: true, U: true, D: true }
+    }
+  }
+];
+
+export async function getUsers(ctx, next) {
+
   const totalCount = 42; // Общее количество пользователей в БД
-  
+
   ctx.status = 200;
   ctx.body = {
-    data: usersFromDb,
+    data: usersDb,
     meta: {
       total: totalCount,
       limit: 10,
@@ -41,4 +42,18 @@ export async function users(ctx, next){
   };
 
   console.log("[GET USERS]");
+}
+
+export function deleteUser(ctx, next) {
+  const copyDB = [...usersDb];
+  const userId = ctx.request.params.id;
+
+  const indexUserToDelete = copyDB.findIndex(elem => userId === elem.id);
+
+  copyDB.slice(indexUserToDelete, 1)
+  
+  ctx.status = 200;
+  ctx.body = `Пользователь ${copyDB[indexUserToDelete].username} успешно удален.`;
+
+  console.log("[DELETE USER]");
 }
