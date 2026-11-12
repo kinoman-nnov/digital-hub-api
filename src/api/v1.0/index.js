@@ -1,6 +1,5 @@
 import Router from '@koa/router';
 import authRoute from './routes/auth.js';
-import profileRoute from './routes/profile.js';
 import usersRoute from './routes/users.js';
 import newsRoute from './routes/news.js';
 
@@ -14,6 +13,5 @@ router.get('/', async (ctx) => {
 });
 
 router.use(authRoute.routes()).use(authRoute.allowedMethods());
-router.use('/profile', profileRoute.routes()).use(profileRoute.allowedMethods());
-router.use('/users', usersRoute.routes()).use(usersRoute.allowedMethods());
+router.use(usersRoute.routes()).use(usersRoute.allowedMethods());
 router.use('/news', newsRoute.routes()).use(newsRoute.allowedMethods());

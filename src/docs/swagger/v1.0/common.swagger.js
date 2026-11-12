@@ -27,7 +27,7 @@ export const makePaginatedResponse = (schemaName, description = 'Успешны�
     'application/json': {
       schema: {
         type: 'object',
-        required: ['items', 'meta'],
+        required: ['data', 'meta'],
         properties: {
           data: {
             type: 'array',

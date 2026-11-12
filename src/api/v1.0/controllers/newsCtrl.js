@@ -67,35 +67,36 @@ export function postNews(ctx, next) {
 }
 
 export function patchNews(ctx, next) {
-  const { text, title } = ctx.request.body;
-  const id = ctx.request.params.id;
+  const copyDB = [...newsDb];
 
-  // const getUserById = readUserData from newsDb
+  const { text, title } = ctx.request.body;
+  const newsId = ctx.request.params.id;
+
+  const editItem = newsDb.find(item => item.id === newsId);
+
+  if (!editItem) ctx.throw(500, 'Ошибка: новость не найдена.');
+
+  editItem.text = text;
+  editItem.title = title;
 
   ctx.status = 200;
-  ctx.body = {
-    data: newsDb,
-    // meta: { ?????????????????????????????????
-    //   total: totalCount,
-    //   limit: 10,
-    //   page: 1
-    // }
-  };
+  ctx.body = { data: copyDB };
 
   console.log("[PATCH NEWS]");
 }
 
 export function deleteNews(ctx, next) {
+  const copyDB = [...newsDb];
+  const newsId = ctx.request.params.id;
 
+  const indNewsById = copyDB.findIndex(item => item.id === newsId);
+
+  if (indNewsById === -1) ctx.throw(500, 'Ошибка: новость не найдена.');
+
+  copyDB.slice(indNewsById, 1);
+  
   ctx.status = 200;
-  ctx.body = {
-    data: newsDb,
-    // meta: { ?????????????????????????????????
-    //   total: totalCount,
-    //   limit: 10,
-    //   page: 1
-    // }
-  };
+  ctx.body = `Новость успешно удалена.`;
 
   console.log("[DELETE NEWS]");
 }

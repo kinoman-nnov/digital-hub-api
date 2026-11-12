@@ -39,6 +39,11 @@ const errorTemplate = {
     errExample: 'Unprocessable Entity',
     msgExample: 'Validation failed: Price cannot be negative'
   },
+  500: {
+    description: 'Внутренняя ошибка сервера (проблема на бэкенде).',
+    errExample: 'Internal Server Error',
+    msgExample: 'An unexpected error occurred on the server'
+  }
 }
 
 const makeErrorResponse = ({ description, errExample, msgExample }) => {
@@ -71,3 +76,4 @@ export const error_405 = makeErrorResponse(errorTemplate[405]);
 export const error_409 = makeErrorResponse(errorTemplate[409]);
 export const error_413 = makeErrorResponse(errorTemplate[413]);
 export const error_422 = makeErrorResponse(errorTemplate[422]);
+export const error_500 = makeErrorResponse(errorTemplate[500]);

@@ -1,5 +1,14 @@
 import { makePaginatedResponse, makeRequestBody } from '../common.swagger.js';
-import { error_401, error_403 } from '../errors.swagger.js';
+import { error_400, error_401, error_403, error_404 } from '../errors.swagger.js';
+
+const newsIdParam = {
+  name: 'id',
+  in: 'path',
+  required: true,
+  schema: { type: 'string' },
+  description: 'Идентификатор новости',
+  example: 'news_6745670cvb'
+};
 
 export const newsSwagger = {
   paths: {
@@ -8,7 +17,6 @@ export const newsSwagger = {
         summary: 'Получение списка всех новостей.',
         description: "Возвращает список всех новостей из базы данных.",
         tags: ['News'],
-        security: [{ BearerAuth: [] }],
         responses: {
           200: makePaginatedResponse('NewsResponse', 'Список новостей успешно получен.'),
           401: error_401,
@@ -17,12 +25,12 @@ export const newsSwagger = {
       },
       post: {
         summary: 'Создание новой новости.',
-        description: "Возвращает обновленный список всех новостей из базы данных. Сигнатура запроса: { text, title }.",
+        description: 'Создает новую новость в БД и возвращает обновленный список всех новостей из базы данных.',
         tags: ['News'],
-        security: [{ BearerAuth: [] }],
         requestBody: makeRequestBody('NewsRequestBody'),
         responses: {
           200: makePaginatedResponse('NewsResponse', 'Новость успешно создана.'),
+          400: error_400,
           401: error_401,
           403: error_403
         }
@@ -30,29 +38,30 @@ export const newsSwagger = {
     },
     '/news/{id}': {
       patch: {
-        summary: 'Обновление существующей новости по id из базы данных.',
-        description: "Возвращает обновленный список всех новостей из базы данных. Сигнатура запроса: { text, title }.",
-        parameters: [
-          {
-            name: 'id',
-            in: 'path',
-            required: true,
-            schema: { type: 'string' },
-            description: 'Идентификатор новости для удаления',
-            example: 'news_6745670cvb'
-          }
-        ],
+        summary: 'Обновление существующей новости.',
+        description: 'Обновляет существующую новость по id из базы данных и возвращает обновленный список всех новостей.',
+        parameters: [newsIdParam],
         tags: ['News'],
-        security: [{ BearerAuth: [] }],
         requestBody: makeRequestBody('NewsRequestBody'),
         responses: {
           200: makePaginatedResponse('NewsResponse', 'Новость успешно обновлена.'),
+          400: error_400,
           401: error_401,
-          403: error_403
+          403: error_403,
+          404: error_404
         }
       },
       delete: {
-
+        summary: 'Удаление существующей новости.',
+        description: "Удаляет существующую новость по id из базы данных и возвращает обновленный список всех новостей.",
+        parameters: [newsIdParam],
+        tags: ['News'],
+        responses: {
+          200: makePaginatedResponse('NewsResponse', 'Новость успешно удалена.'),
+          401: error_401,
+          403: error_403,
+          404: error_404
+        }
       }
     }
   }

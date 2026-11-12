@@ -108,6 +108,16 @@ const baseSwagger = {
         }
       },
 
+      UpdatePermissionRequestBody: {
+        type: 'object',
+        required: ['permission'],
+        properties: {
+          permission: {
+            $ref: '#/components/schemas/Permission'
+          }
+        }
+      },
+
       // Сигнатура запроса создание новости
       NewsRequestBody: {
         type: 'object',
@@ -166,7 +176,13 @@ const baseSwagger = {
           accessToken: {
             type: 'string',
             example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NDIsImV4cCI6MTc5MzI4MDkwMH0.signature_here',
-            description: 'Короткоживущий JWT-токен доступа (15 минут), сохраняемый ИСКЛЮЧИТЕЛЬНО в RAM памяти фронтенда'
+            description: 'Короткоживущий JWT-токен доступа (15 минут), сохраняемый в RAM памяти фронтенда'
+          },
+          accessTokenExpiredAt: {
+            type: 'integer',
+            format: 'int64',
+            example: 1793280900000,
+            description: 'Время истечения Access-токена в миллисекундах (Unix Timestamp)'
           }
         }
       },
@@ -209,6 +225,14 @@ const baseSwagger = {
         ]
       },
 
+      // Объект авторизованного пользователя (BFF паттерн)
+      BffAuthorizedUserResponse: {
+        allOf: [
+          { $ref: '#/components/schemas/UserResponse' },
+          { $ref: '#/components/schemas/BffTokenResponse' }
+        ]
+      },
+
       // Объект новости
       NewsResponse: {
         type: 'object',
@@ -224,36 +248,17 @@ const baseSwagger = {
           text: { type: 'string', example: 'Текст новости от пользователя' },
           user: { $ref: '#/components/schemas/User' }
         }
-      },
+      }
+    },
 
-      // Шаблоны готовых HTTP-ответов сервера
-      responses: {
-        // Шаблон для 500 ошибки
-        InternalServerError: {
-          description: 'Внутренняя ошибка сервера (проблема на бэкенде)',
-          content: {
-            'application/json': {
-              schema: {
-                type: 'object',
-                properties: {
-                  error: { type: 'string', example: 'Internal Server Error' },
-                  message: { type: 'string', example: 'An unexpected error occurred on the server' }
-                }
-              }
-            }
-          }
-        }
-      },
-
-      // Настройки безопасности (Авторизация)
-      securitySchemes: {
-        // Описание JWT Bearer авторизации (активирует кнопку Authorize сверху страницы)
-        BearerAuth: {
-          type: 'http',
-          scheme: 'bearer',
-          bearerFormat: 'JWT',
-          description: 'Введите ваш JWT-токен (Bearer подставится автоматически)'
-        }
+    // Настройки безопасности (Авторизация)
+    securitySchemes: {
+      // Описание JWT Bearer авторизации (активирует кнопку Authorize)
+      BearerAuth: {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        description: 'Введите ваш JWT-токен (Bearer подставится автоматически)'
       }
     }
   }
